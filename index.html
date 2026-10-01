@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mappa concettuale</title>
+    <style>
+      :root {
+        --bg: #f3f6ff;
+        --panel-strong: #1a1a2e;
+        --text: #1e293b;
+        --muted: #64748b;
+        --danger: #ef4444;
+        --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+
+        --red: #ef4444;
+        --red-dark: #dc2626;
+        --blue: #3b82f6;
+        --blue-dark: #1d4ed8;
+        --yellow: #fbbf24;
+        --yellow-dark: #f59e0b;
+        --violet: #a855f7;
+        --violet-dark: #9333ea;
+        --green: #22c55e;
+        --green-dark: #16a34a;
+        --bordeaux: #8b1538;
+        --bordeaux-dark: #6b0f2a;
+        --gray: #6b7280;
+        --gray-dark: #4b5563;
+        --black: #1f2937;
+        --black-dark: #111827;
+
+        --line: #3b82f6;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html, body {
+        margin: 0;
+        height: 100%;
+        font-family: Inter, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      button, input {
+        font: inherit;
+      }
+
+      .app {
+        display: flex;
+        height: 100vh;
+        width: 100%;
+      }
+
+      .sidebar {
+        width: 280px;
+        background: var(--panel-strong);
+        color: white;
+        padding: 24px 20px;
+        box-shadow: 12px 0 24px rgba(2, 6, 23, 0.12);
+        overflow-y: auto;
+      }
+
+      .sidebar h1 {
+        margin: 0 0 18px;
+        font-size: 2rem;
+        background: linear-gradient(135deg, var(--red), var(--blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .sidebar label {
+        display: block;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 600;
+      }
+
+      .sidebar input {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+        padding: 12px 14px;
+        border-radius: 12px;
+        margin-bottom: 8px;
+        outline: none;
+      }
+
+      .sidebar input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      #mainIdea {
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+        padding: 12px 14px;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        outline: none;
+        resize: vertical;
+        min-height: 80px;
+        font-family: inherit;
+      }
+
+      #mainIdea::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      #mainIdea:focus {
+        border-color: rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .actions {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      button {
+        border: none;
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.15s ease, opacity 0.15s ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      button.primary {
+        background: linear-gradient(135deg, var(--red), var(--red-dark));
+        color: white;
+      }
+
+      button:not(.primary) {
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      button.danger {
+        background: rgba(239, 68, 68, 0.15);
+        color: #fecaca;
+        border: 1px solid rgba(239, 68, 68, 0.25);
+      }
+
+      .color-picker {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 16px;
+      }
+
+      .color-picker label {
+        margin-bottom: 12px;
+        display: block;
+      }
+
+      .color-options {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+
+      .color-btn {
+        width: 100%;
+        height: 45px;
+        border-radius: 10px;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: transform 0.15s ease, border 0.15s ease;
+        padding: 0;
+        font-size: 0.75rem;
+        color: white;
+        font-weight: 600;
+      }
+
+      .color-btn:hover {
+        transform: scale(1.05);
+      }
+
+      .color-btn.red {
+        background: linear-gradient(135deg, var(--red), var(--red-dark));
+      }
+
+      .color-btn.blue {
+        background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+      }
+
+      .color-btn.yellow {
+        background: linear-gradient(135deg, var(--yellow), var(--yellow-dark));
+      }
+
+      .color-btn.violet {
+        background: linear-gradient(135deg, var(--violet), var(--violet-dark));
+      }
+
+      .color-btn.green {
+        background: linear-gradient(135deg, var(--green), var(--green-dark));
+      }
+
+      .color-btn.bordeaux {
+        background: linear-gradient(135deg, var(--bordeaux), var(--bordeaux-dark));
+      }
+
+      .color-btn.gray {
+        background: linear-gradient(135deg, var(--gray), var(--gray-dark));
+      }
+
+      .color-btn.black {
+        background: linear-gradient(135deg, var(--black), var(--black-dark));
+      }
+
+      .color-btn.active {
+        border-color: white;
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+      }
+
+      .hint {
+        margin-top: 18px;
+        line-height: 1.5;
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 0.92rem;
+      }
+
+      .workspace {
+        flex: 1;
+        position: relative;
+        min-width: 0;
+      }
+
+      .canvas {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background:
+          linear-gradient(var(--bg) 0, var(--bg) 100%),
+          linear-gradient(90deg, rgba(59, 130, 246, 0.06) 1px, transparent 1px),
+          linear-gradient(rgba(59, 130, 246, 0.06) 1px, transparent 1px);
+        background-size: auto, 24px 24px, 24px 24px;
+        background-position: center;
+      }
+
+      .connections {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .node {
+        position: absolute;
+        width: 180px;
+        min-height: 80px;
+        background: rgba(255, 255, 255, 0.88);
+        border: 2px solid rgba(239, 68, 68, 0.8);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        padding: 10px 12px;
+        z-index: 2;
+        user-select: none;
+        cursor: grab;
+        backdrop-filter: blur(6px);
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .node.red {
+        border-color: rgba(239, 68, 68, 0.8);
+        background: rgba(254, 242, 242, 0.95);
+      }
+
+      .node.blue {
+        border-color: rgba(59, 130, 246, 0.8);
+        background: rgba(240, 249, 255, 0.95);
+      }
+
+      .node.yellow {
+        border-color: rgba(251, 191, 36, 0.8);
+        background: rgba(255, 252, 235, 0.95);
+      }
+
+      .node.violet {
+        border-color: rgba(168, 85, 247, 0.8);
+        background: rgba(250, 245, 255, 0.95);
+      }
+
+      .node.green {
+        border-color: rgba(34, 197, 94, 0.8);
+        background: rgba(240, 253, 244, 0.95);
+      }
+
+      .node.bordeaux {
+        border-color: rgba(139, 21, 56, 0.8);
+        background: rgba(254, 242, 247, 0.95);
+      }
+
+      .node.gray {
+        border-color: rgba(107, 114, 128, 0.8);
+        background: rgba(249, 250, 251, 0.95);
+      }
+
+      .node.black {
+        border-color: rgba(31, 41, 55, 0.8);
+        background: rgba(243, 244, 246, 0.95);
+      }
+
+      .node.selected {
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2), var(--shadow);
+      }
+
+      .node-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+      }
+
+      .node-title {
+        font-weight: 700;
+        color: var(--text);
+        font-size: 0.98rem;
+        line-height: 1.3;
+        overflow-wrap: anywhere;
+      }
+
+      .delete-btn {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: rgba(239, 68, 68, 0.12);
+        color: var(--danger);
+        border: 1px solid rgba(239, 68, 68, 0.24);
+        padding: 0;
+        font-size: 18px;
+        line-height: 1;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .delete-btn:hover {
+        background: rgba(239, 68, 68, 0.25);
+      }
+
+      .node-body {
+        width: 100%;
+        border: 1px solid #d9e2f3;
+        border-radius: 10px;
+        background: rgba(148, 163, 184, 0.05);
+        min-height: 38px;
+        padding: 8px 10px;
+        outline: none;
+        color: var(--text);
+        font-size: 0.92rem;
+      }
+
+      .node-body:empty::before {
+        content: "Testo del nodo";
+        color: var(--muted);
+      }
+
+      .node-body:focus {
+        border-color: var(--blue);
+        background: rgba(148, 163, 184, 0.1);
+      }
+
+      @media (max-width: 800px) {
+        .app {
+          flex-direction: column;
+        }
+
+        .sidebar {
+          width: 100%;
+          height: auto;
+          max-height: 40vh;
+        }
+
+        .workspace {
+          min-height: 60vh;
+        }
+
+        .color-options {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <h1>Mappa</h1>
+
+        <label for="mapName">Titolo della mappa</label>
+        <input id="mapName" type="text" placeholder="Es: Pianificazione progetto" />
+
+        <label for="mainIdea">Idea principale</label>
+        <textarea id="mainIdea" placeholder="Scrivi la tua idea principale qui..."></textarea>
+
+        <div class="actions">
+          <button id="addNodeBtn" class="primary">+ Nuovo nodo</button>
+          <button id="saveBtn">Salva</button>
+          <button id="clearBtn" class="danger">Cancella</button>
+        </div>
+
+        <div class="color-picker">
+          <label>Colore nodo</label>
+          <div class="color-options">
+            <button class="color-btn red active" data-color="red" title="Rosso">Rosso</button>
+            <button class="color-btn blue" data-color="blue" title="Blu">Blu</button>
+            <button class="color-btn yellow" data-color="yellow" title="Giallo">Giallo</button>
+            <button class="color-btn violet" data-color="violet" title="Viola">Viola</button>
+            <button class="color-btn green" data-color="green" title="Verde">Verde</button>
+            <button class="color-btn bordeaux" data-color="bordeaux" title="Bordeaux">Bordeaux</button>
+            <button class="color-btn gray" data-color="gray" title="Grigio">Grigio</button>
+            <button class="color-btn black" data-color="black" title="Nero">Nero</button>
+          </div>
+        </div>
+
+        <p class="hint">
+          Istruzione: clicca un nodo e poi un altro per collegarli.
+        </p>
+      </aside>
+
+      <main class="workspace">
+        <div id="canvas" class="canvas" aria-label="Area di lavoro">
+          <svg id="connections" class="connections" aria-hidden="true"></svg>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const STORAGE_KEY = "mindmap-board-v1";
+      const canvas = document.getElementById("canvas");
+      const svg = document.getElementById("connections");
+      const mapNameInput = document.getElementById("mapName");
+      const mainIdeaInput = document.getElementById("mainIdea");
+      const addNodeBtn = document.getElementById("addNodeBtn");
+      const saveBtn = document.getElementById("saveBtn");
+      const clearBtn = document.getElementById("clearBtn");
+
+      let nodes = [];
+      let connections = [];
+      let selectedNodeId = null;
+      let draggingNodeId = null;
+      let selectedColor = "red";
+      let dragOffset = { x: 0, y: 0 };
+
+      function generateId() {
+        return "node-" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+      }
+
+      function createNode(x = 140, y = 120, title = "Nuovo nodo", text = "Scrivi qui...", color = "red") {
+        return {
+          id: generateId(),
+          x,
+          y,
+          title,
+          text,
+          color
+        };
+      }
+
+      function clamp(value, min, max) {
+        return Math.min(Math.max(value, min), max);
+      }
+
+      function getNodeById(id) {
+        return nodes.find(node => node.id === id);
+      }
+
+      function renderConnections() {
+        svg.innerHTML = "";
+
+        connections.forEach(connection => {
+          const fromNode = getNodeById(connection.from);
+          const toNode = getNodeById(connection.to);
+
+          if (!fromNode || !toNode) return;
+
+          const x1 = fromNode.x + 180 / 2;
+          const y1 = fromNode.y + 80 / 2;
+          const x2 = toNode.x + 180 / 2;
+          const y2 = toNode.y + 80 / 2;
+
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("x1", x1);
+          line.setAttribute("y1", y1);
+          line.setAttribute("x2", x2);
+          line.setAttribute("y2", y2);
+          line.setAttribute("stroke", "#3b82f6");
+          line.setAttribute("stroke-width", "3");
+          line.setAttribute("stroke-linecap", "round");
+          line.setAttribute("opacity", "0.85");
+          svg.appendChild(line);
+        });
+      }
+
+      function renderNodes() {
+        canvas.querySelectorAll(".node").forEach(el => el.remove());
+
+        nodes.forEach(node => {
+          const el = document.createElement("div");
+          el.className = "node " + (node.color || "red") + (selectedNodeId === node.id ? " selected" : "");
+          el.style.left = node.x + "px";
+          el.style.top = node.y + "px";
+
+          const header = document.createElement("div");
+          header.className = "node-header";
+
+          const title = document.createElement("div");
+          title.className = "node-title";
+          title.textContent = node.title;
+
+          const deleteBtn = document.createElement("button");
+          deleteBtn.className = "delete-btn";
+          deleteBtn.textContent = "×";
+          deleteBtn.type = "button";
+          deleteBtn.addEventListener("click", (event) => {
+            event.stopPropagation();
+            removeNode(node.id);
+          });
+
+          header.appendChild(title);
+          header.appendChild(deleteBtn);
+
+          const body = document.createElement("div");
+          body.className = "node-body";
+          body.contentEditable = true;
+          body.textContent = node.text;
+          body.addEventListener("input", () => {
+            node.text = body.textContent.trim() || "Scrivi qui...";
+            saveBoard();
+          });
+
+          const titleInput = document.createElement("div");
+          titleInput.className = "node-body";
+          titleInput.contentEditable = true;
+          titleInput.textContent = node.title;
+          titleInput.style.marginTop = "8px";
+          titleInput.addEventListener("input", () => {
+            node.title = titleInput.textContent.trim() || "Nuovo nodo";
+            render();
+            saveBoard();
+          });
+
+          el.appendChild(header);
+          el.appendChild(body);
+          el.appendChild(titleInput);
+
+          el.addEventListener("click", (event) => {
+            if (event.target.closest(".delete-btn")) return;
+            if (event.target.closest(".node-body")) return;
+
+            if (selectedNodeId && selectedNodeId !== node.id) {
+              addConnection(selectedNodeId, node.id);
+              selectedNodeId = null;
+              render();
+              saveBoard();
+              return;
+            }
+
+            selectedNodeId = node.id;
+            render();
+          });
+
+          el.addEventListener("pointerdown", (event) => {
+            if (event.target.closest(".delete-btn")) return;
+            if (event.target.closest(".node-body")) return;
+
+            const rect = canvas.getBoundingClientRect();
+            draggingNodeId = node.id;
+            dragOffset.x = event.clientX - rect.left - node.x;
+            dragOffset.y = event.clientY - rect.top - node.y;
+            selectedNodeId = node.id;
+            el.setPointerCapture(event.pointerId);
+            render();
+          });
+
+          canvas.appendChild(el);
+        });
+      }
+
+      function addConnection(fromId, toId) {
+        if (fromId === toId) return;
+
+        const alreadyExists = connections.some(conn =>
+          (conn.from === fromId && conn.to === toId) ||
+          (conn.from === toId && conn.to === fromId)
+        );
+
+        if (alreadyExists) return;
+
+        connections.push({ from: fromId, to: toId });
+      }
+
+      function removeNode(id) {
+        nodes = nodes.filter(node => node.id !== id);
+        connections = connections.filter(conn => conn.from !== id && conn.to !== id);
+        if (selectedNodeId === id) selectedNodeId = null;
+        render();
+        saveBoard();
+      }
+
+      function render() {
+        renderConnections();
+        renderNodes();
+      }
+
+      function saveBoard() {
+        const payload = {
+          mapName: mapNameInput.value.trim(),
+          mainIdea: mainIdeaInput.value.trim(),
+          nodes,
+          connections
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      }
+
+      function loadBoard() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+
+        if (!raw) {
+          nodes = [createNode(160, 120, "Idea principale", "Scrivi qui...", "red")];
+          return;
+        }
+
+        try {
+          const data = JSON.parse(raw);
+          mapNameInput.value = data.mapName || "";
+          mainIdeaInput.value = data.mainIdea || "";
+          nodes = Array.isArray(data.nodes) ? data.nodes : [];
+          connections = Array.isArray(data.connections) ? data.connections : [];
+        } catch {
+          nodes = [createNode(160, 120, "Idea principale", "Scrivi qui...", "red")];
+        }
+
+        if (nodes.length === 0) {
+          nodes = [createNode(160, 120, "Idea principale", "Scrivi qui...", "red")];
+        }
+      }
+
+      document.querySelectorAll(".color-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          selectedColor = btn.dataset.color;
+
+          document.querySelectorAll(".color-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+        });
+      });
+
+      addNodeBtn.addEventListener("click", () => {
+        const newNode = createNode(
+          180 + Math.random() * 220,
+          120 + Math.random() * 180,
+          "Nuovo nodo",
+          "Scrivi qui...",
+          selectedColor
+        );
+
+        nodes.push(newNode);
+        selectedNodeId = newNode.id;
+        render();
+        saveBoard();
+      });
+
+      saveBtn.addEventListener("click", saveBoard);
+
+      clearBtn.addEventListener("click", () => {
+        const confirmed = window.confirm("Sei sicuro di voler cancellare la mappa salvata?");
+        if (!confirmed) return;
+
+        localStorage.removeItem(STORAGE_KEY);
+        nodes = [createNode(180, 120, "Idea principale", "Scrivi qui...", "red")];
+        connections = [];
+        selectedNodeId = nodes[0].id;
+        mapNameInput.value = "";
+        mainIdeaInput.value = "";
+        render();
+      });
+
+      window.addEventListener("pointermove", (event) => {
+        if (!draggingNodeId) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const node = getNodeById(draggingNodeId);
+        if (!node) return;
+
+        node.x = clamp(event.clientX - rect.left - dragOffset.x, 20, rect.width - 200);
+        node.y = clamp(event.clientY - rect.top - dragOffset.y, 20, rect.height - 100);
+
+        render();
+      });
+
+      window.addEventListener("pointerup", () => {
+        draggingNodeId = null;
+        saveBoard();
+      });
+
+      mapNameInput.addEventListener("input", saveBoard);
+      mainIdeaInput.addEventListener("input", saveBoard);
+
+      loadBoard();
+      render();
+      saveBoard();
+    </script>
+  </body>
+</html>
